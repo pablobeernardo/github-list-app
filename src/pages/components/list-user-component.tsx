@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import UserEntity from "../../entities/users-entity";
 import { Image } from "expo-image";
+import UserEntity from "../../entities/users-entity";
 
-export default function ListUser() {
+interface ListUserProps {
+  navigation: any;
+}
+
+export default function ListUser({ navigation }: ListUserProps) {
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchStarted, setSearchStarted] = useState(false);
 
   const handleSearch = async () => {
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer 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");
+    myHeaders.append("Authorization", "Bearer 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");
 
     const requestOptions = {
       method: "GET",
@@ -27,7 +31,7 @@ export default function ListUser() {
             name: user.name,
             login: user.login,
             avatar: user.avatar_url,
-            url: user.html_url,
+            url: user.repos_url,
           };
           setUsers([userData]);
         }
@@ -36,7 +40,7 @@ export default function ListUser() {
 
     setSearchStarted(true);
   };
-
+  
   const handleInputChange = (text: string) => {
     setSearchQuery(text);
     if (text.length < 3) {
@@ -44,33 +48,41 @@ export default function ListUser() {
     }
   };
 
+  const handleUserPress = (user: UserEntity) => {
+    navigation.navigate('RepositoryList', { user });
+  };
+
   const renderUser = ({ item }: { item: UserEntity }) => (
-    <View style={styles.container}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image
+    <TouchableOpacity onPress={() => handleUserPress(item)}>
+      <View>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image
             source={{ uri: item.avatar }}
             style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }}
-        />
-        <Text>{item.login}</Text>
+          />
+          <Text>{item.login}</Text>
         </View>
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row" }}>
+      <Text style={styles.title}>GitHub List</Text>
+      <View>
         <TextInput
-          placeholder="Search users"
+          style={styles.input}
+          placeholder="Pesquise um usuário"
           value={searchQuery}
           onChangeText={handleInputChange}
         />
         <TouchableOpacity onPress={handleSearch} disabled={searchQuery.length < 3}>
-          <Text style={{ marginLeft: 10, color: searchQuery.length < 3 ? "gray" : "blue" }}>
-            Search
+          <Text style={{ textAlign:'center', color: searchQuery.length < 3 ? "gray" : "blue" }}>
+            Pesquisar
           </Text>
         </TouchableOpacity>
       </View>
-      <View>
+      <View style={styles.result}>
         {searchStarted && (
           <FlatList
             data={users}
@@ -86,9 +98,26 @@ export default function ListUser() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop:50
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    marginTop: 200,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  result:{
+    flex: 1,
+    padding: 35
+  }
 });

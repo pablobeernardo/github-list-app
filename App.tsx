@@ -1,9 +1,17 @@
-import ListUser from "./src/pages/components/list-user-component";
-import HomeList from "./src/pages/home-list/home-list";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import ListUser from './src/pages/components/list-user-component';
+import RepositoryList from './src/pages/user-list-repository/list-repositoy';
 
 export default function App() {
+  const Stack = createStackNavigator();
+
   return (
-    <ListUser />
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Usuários GitHub" component={ListUser} />
+        <Stack.Screen name="RepositoryList" component={RepositoryList} /> 
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
