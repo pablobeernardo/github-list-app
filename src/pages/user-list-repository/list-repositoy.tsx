@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, TextInput, StyleSheet, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import RepositoryEntity from '../../entities/repository-entity';
 import { useRoute } from '@react-navigation/native';
 import UserEntity from '../../entities/users-entity';
@@ -33,6 +33,7 @@ export default function RepositoryList({ navigation }: RepositoryListProps) {
             language: repo.language,
             forks: repo.forks,
             defaultBranch: repo.default_branch,
+            description: repo.description,
           }));
 
           setRepositories(repositoryItems);
@@ -47,7 +48,10 @@ export default function RepositoryList({ navigation }: RepositoryListProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.userTitle}>{user && user.name}</Text>
+      <View style={styles.userContainer}>
+        {user && user.avatar && <Image source={{ uri: user.avatar }} style={styles.avatar} />}
+        <Text style={styles.userTitle}>{user && user.name}</Text>
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Pesquisar Repositório"
@@ -56,7 +60,12 @@ export default function RepositoryList({ navigation }: RepositoryListProps) {
       />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         {filteredRepositories.map((repository) => (
-          <Text key={repository.name}>{repository.name}</Text>
+          <TouchableOpacity
+            key={repository.name}
+            onPress={() => navigation.navigate('DetailsRepository', { repository })}
+          >
+            <Text>{repository.name}</Text>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
@@ -70,10 +79,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
   },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
   userTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16,
   },
   input: {
     width: '100%',

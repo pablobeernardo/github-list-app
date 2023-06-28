@@ -14,7 +14,7 @@ export default function ListUser({ navigation }: ListUserProps) {
 
   const handleSearch = async () => {
     const myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer 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");
+    myHeaders.append("Authorization", "Bearer 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");
 
     const requestOptions = {
       method: "GET",

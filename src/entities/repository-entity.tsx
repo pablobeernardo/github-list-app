@@ -8,5 +8,6 @@ export default class RepositoryEntity{
     language: string;
     forks: number;
     defaultBranch: string;
+    description: string;
     
 }
